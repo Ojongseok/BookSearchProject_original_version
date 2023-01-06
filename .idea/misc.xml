@@ -5,8 +5,9 @@
       <map>
         <entry key="..\:/Users/User/AndroidStudioProjects/Practice22/app/src/main/res/layout/activity_main.xml" value="0.25364583333333335" />
         <entry key="..\:/Users/User/AndroidStudioProjects/Practice22/app/src/main/res/layout/fragment_favorite.xml" value="0.2390625" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/Practice22/app/src/main/res/layout/fragment_search.xml" value="0.19302417756638923" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/Practice22/app/src/main/res/layout/fragment_search.xml" value="0.4" />
         <entry key="..\:/Users/User/AndroidStudioProjects/Practice22/app/src/main/res/layout/fragment_settings.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/Practice22/app/src/main/res/layout/item_book_preview.xml" value="0.25364583333333335" />
         <entry key="..\:/Users/User/AndroidStudioProjects/Practice22/app/src/main/res/menu/bottom_navigation.xml" value="0.25364583333333335" />
       </map>
     </option>
