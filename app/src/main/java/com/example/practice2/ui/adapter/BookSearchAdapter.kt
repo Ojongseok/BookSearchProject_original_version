@@ -1,5 +1,6 @@
 package com.example.practice2.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -26,9 +27,7 @@ class BookSearchAdapter : ListAdapter<Book, BookSearchAdapter.BookSearchViewHold
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookSearchViewHolder {
-        return BookSearchViewHolder(
-            ItemBookPreviewBinding.inflate(LayoutInflater.from(parent.context),parent,false)
-        )
+        return BookSearchViewHolder(ItemBookPreviewBinding.inflate(LayoutInflater.from(parent.context),parent,false))
     }
     override fun onBindViewHolder(holder: BookSearchViewHolder, position: Int) {
         val book = currentList[position]
@@ -47,6 +46,7 @@ class BookSearchAdapter : ListAdapter<Book, BookSearchAdapter.BookSearchViewHold
                 return oldItem.isbn == newItem.isbn
             }
             override fun areContentsTheSame(oldItem: Book, newItem: Book): Boolean {
+                Log.d("태그", "${oldItem.title} ㅣ ${newItem.title}")
                 return oldItem == newItem
             }
         }

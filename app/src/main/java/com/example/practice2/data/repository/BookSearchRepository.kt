@@ -1,5 +1,8 @@
 package com.example.practice2.data.repository
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.example.practice2.data.model.Book
 import com.example.practice2.data.model.SearchResponse
 import retrofit2.Response
 
@@ -10,4 +13,11 @@ interface BookSearchRepository {
         page : Int,
         size : Int
     ) : Response<SearchResponse>
+
+    // Room
+    suspend fun insertBooks(book: Book)
+
+    suspend fun deleteBooks(book: Book)
+
+    fun getFavoriteBooks(): LiveData<List<Book>>
 }
