@@ -5,18 +5,16 @@ import com.example.practice2.data.model.Book
 import com.example.practice2.data.model.SearchResponse
 import com.example.practice2.data.repository.BookSearchRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class BookSearchViewModel(private val bookSearchRepository: BookSearchRepository) : ViewModel() {
     private val _searchResult = MutableLiveData<SearchResponse>()
     val searchResult : LiveData<SearchResponse> get() = _searchResult
 
     fun searchBooks(query : String) = viewModelScope.launch(Dispatchers.IO) {
-        val response = bookSearchRepository.searchBooks(query,"accuracy",1,15)
+        val response = bookSearchRepository.searchBooks(query,getSortMode(),1,15)
         if (response.isSuccessful) {
             response.body()?.let {
                 _searchResult.postValue(it)
@@ -36,4 +34,13 @@ class BookSearchViewModel(private val bookSearchRepository: BookSearchRepository
     // hot 스트림
     val favoriteBooks: StateFlow<List<Book>> = bookSearchRepository.getFavoriteBooks()
         .stateIn(viewModelScope,SharingStarted.WhileSubscribed(5000), listOf())
+
+    // DataStore
+    fun savaSortMode(value: String) = viewModelScope.launch(Dispatchers.IO) {
+        bookSearchRepository.saveSortMode(value)
+    }
+
+    suspend fun getSortMode() = withContext(Dispatchers.IO) {
+        bookSearchRepository.getSortMode().first()
+    }
 }

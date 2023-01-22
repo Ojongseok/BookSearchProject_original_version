@@ -1,8 +1,10 @@
 package com.example.practice2.ui.view
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -17,6 +19,7 @@ import com.example.practice2.data.repository.BookSearchRepositoryImpl
 import com.example.practice2.databinding.ActivityMainBinding
 import com.example.practice2.ui.viewmodel.BookSearchViewModel
 import com.example.practice2.ui.viewmodel.BookSearchViewModelFactory
+import com.example.practice2.util.Constants.DATASTORE_NAME
 
 class MainActivity : AppCompatActivity() {
     private val binding: ActivityMainBinding by lazy {
@@ -27,13 +30,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController : NavController
     private lateinit var appBarConfiguration : AppBarConfiguration
 
+    // dataStore 선언 방법
+    private val Context.dataStroe by preferencesDataStore(DATASTORE_NAME)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         val database = BookSearchDatabase.getInstance(this)
-        val bookSearchRepository = BookSearchRepositoryImpl(database)
+        val bookSearchRepository = BookSearchRepositoryImpl(database,dataStroe)
         val factory = BookSearchViewModelFactory(bookSearchRepository)
         viewModel = ViewModelProvider(this,factory) [BookSearchViewModel::class.java]
 
