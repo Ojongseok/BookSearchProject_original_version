@@ -13,20 +13,21 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.practice2.R
 import com.example.practice2.databinding.FragmentFavoriteBinding
-import com.example.practice2.ui.adapter.BookSearchAdapter
+import com.example.practice2.ui.adapter.BookSearchPagingAdapter
 import com.example.practice2.ui.viewmodel.BookSearchViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+
 
 class FavoriteFragment : Fragment() {
     private var _binding : FragmentFavoriteBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var viewModel: BookSearchViewModel
-    private lateinit var bookSearchAdapter : BookSearchAdapter
+//    private lateinit var bookSearchAdapter : BookSearchAdapter
+    private lateinit var bookSearchAdapter: BookSearchPagingAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentFavoriteBinding.inflate(inflater, container,false)
@@ -51,17 +52,27 @@ class FavoriteFragment : Fragment() {
 //            }
 //        }
         // hot 스트림일 때
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                viewModel.favoriteBooks.collectLatest {
+//                    bookSearchAdapter.submitList(it)
+//                }
+//            }
+//        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.favoriteBooks.collectLatest {
-                    bookSearchAdapter.submitList(it)
+                viewModel.favoritePagingBooks.collectLatest {
+                    bookSearchAdapter.submitData(it)
                 }
             }
         }
+
     }
 
     fun setupRecyclerView() {
-        bookSearchAdapter = BookSearchAdapter()
+//        bookSearchAdapter = BookSearchAdapter()
+        bookSearchAdapter = BookSearchPagingAdapter()
         binding.rvFavoriteBooks.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL,false)
@@ -89,12 +100,21 @@ class FavoriteFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.bindingAdapterPosition
-                val book = bookSearchAdapter.currentList[position]
-                viewModel.deleteBook(book)
-                Snackbar.make(view, "Book 삭제", Snackbar.LENGTH_SHORT).apply {
-                    setAction("취소"){
-                        viewModel.saveBook(book)
-                    }.show()
+//                val book = bookSearchAdapter.currentList[position]
+//                viewModel.deleteBook(book)
+//                Snackbar.make(view, "Book 삭제", Snackbar.LENGTH_SHORT).apply {
+//                    setAction("취소"){
+//                        viewModel.saveBook(book)
+//                    }.show()
+//                }
+                val pagedBook = bookSearchAdapter.peek(position)
+                pagedBook?.let { book ->
+                    viewModel.deleteBook(book)
+                    Snackbar.make(view, "Book 삭제", Snackbar.LENGTH_SHORT).apply {
+                        setAction("취소"){
+                            viewModel.saveBook(book)
+                        }.show()
+                    }
                 }
             }
         }

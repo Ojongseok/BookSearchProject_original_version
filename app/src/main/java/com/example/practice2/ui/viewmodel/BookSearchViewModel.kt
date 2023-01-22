@@ -1,6 +1,8 @@
 package com.example.practice2.ui.viewmodel
 
 import androidx.lifecycle.*
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.example.practice2.data.model.Book
 import com.example.practice2.data.model.SearchResponse
 import com.example.practice2.data.repository.BookSearchRepository
@@ -43,4 +45,10 @@ class BookSearchViewModel(private val bookSearchRepository: BookSearchRepository
     suspend fun getSortMode() = withContext(Dispatchers.IO) {
         bookSearchRepository.getSortMode().first()
     }
+
+    // Paging
+    val favoritePagingBooks: StateFlow<PagingData<Book>> =
+        bookSearchRepository.getFavoritePagingBooks()
+            .cachedIn(viewModelScope)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PagingData.empty())
 }
