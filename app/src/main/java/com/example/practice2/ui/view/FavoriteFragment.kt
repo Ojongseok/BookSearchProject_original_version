@@ -51,6 +51,7 @@ class FavoriteFragment : Fragment() {
 //                bookSearchAdapter.submitList(it)
 //            }
 //        }
+
         // hot 스트림일 때
 //        viewLifecycleOwner.lifecycleScope.launch {
 //            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

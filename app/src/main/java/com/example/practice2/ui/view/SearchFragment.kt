@@ -7,18 +7,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.practice2.databinding.FragmentSearchBinding
 import com.example.practice2.ui.adapter.BookSearchAdapter
+import com.example.practice2.ui.adapter.BookSearchPagingAdapter
 import com.example.practice2.ui.viewmodel.BookSearchViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class SearchFragment : Fragment() {
     private var _binding : FragmentSearchBinding? = null
     private val binding get() = _binding!!
     private lateinit var bookSearchViewModel : BookSearchViewModel
-    private lateinit var bookSearchAdapter : BookSearchAdapter
+//    private lateinit var bookSearchAdapter : BookSearchAdapter
+    private lateinit var bookSearchAdapter : BookSearchPagingAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentSearchBinding.inflate(inflater, container,false)
@@ -31,13 +38,24 @@ class SearchFragment : Fragment() {
         setupRecyclerView()
         searchBooks()
 
-        bookSearchViewModel.searchResult.observe(viewLifecycleOwner) {
-            val books = it.documents
-            bookSearchAdapter .submitList(books)
+//        bookSearchViewModel.searchResult.observe(viewLifecycleOwner) {
+//            val books = it.documents
+//            bookSearchAdapter .submitList(books)
+//        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                bookSearchViewModel.searchPagingResult.collectLatest {
+                    bookSearchAdapter.submitData(it)
+                }
+            }
         }
+
     }
     fun setupRecyclerView() {
-        bookSearchAdapter = BookSearchAdapter()
+//        bookSearchAdapter = BookSearchAdapter()
+        bookSearchAdapter = BookSearchPagingAdapter()
+
         binding.rvSearchResult.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL,false)
@@ -59,7 +77,8 @@ class SearchFragment : Fragment() {
                 text?.let {
                     val query = it.toString().trim()
                     if (query.isNotEmpty()) {
-                        bookSearchViewModel.searchBooks(query)
+//                        bookSearchViewModel.searchBooks(query)
+                        bookSearchViewModel.searchBooksPaging(query)
                     }
                 }
             }
